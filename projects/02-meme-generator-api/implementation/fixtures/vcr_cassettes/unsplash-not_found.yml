@@ -1,0 +1,56 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://images.unsplash.com/photo-1647549831144-09d4c521c1f1
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 404
+      message: Not Found
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '5372658'
+      Cache-Control:
+      - public, max-age=315360000
+      Last-Modified:
+      - Thu, 17 Mar 2022 20:43:53 GMT
+      Server:
+      - imgix
+      X-Imgix-Id:
+      - 59741c669e2325346eaed1e7be425747b0bd9385
+      Date:
+      - Sat, 16 Apr 2022 14:06:21 GMT
+      Age:
+      - '330341'
+      Accept-Ranges:
+      - bytes
+      Set-Cookie:
+      - ugid=09a02b98ef7e7d7f872592044fe1f4735500393;domain=.unsplash.com;path=/;expires=Sun,
+        16 Apr 2023 14:06:21 GMT;SameSite=None;Secure
+      Content-Type:
+      - image/jpeg
+      Access-Control-Allow-Origin:
+      - "*"
+      Cross-Origin-Resource-Policy:
+      - cross-origin
+      X-Content-Type-Options:
+      - nosniff
+      X-Served-By:
+      - cache-sjc10058-SJC, cache-hhn4022-HHN
+      X-Cache:
+      - MISS, HIT
+
+  recorded_at: Sat, 16 Apr 2022 14:06:21 GMT
+recorded_with: VCR 6.1.0

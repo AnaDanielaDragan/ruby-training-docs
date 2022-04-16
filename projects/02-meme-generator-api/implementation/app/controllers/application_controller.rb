@@ -20,25 +20,20 @@ class ApplicationController < Sinatra::Base
   end
 
   post '/memes' do
-    begin #extract auth check in separate method
-      token = request.env['HTTP_AUTHORIZATION'].split[1]
-    rescue NoMethodError
-      status 401
-    end
-
+    token = (request.env['HTTP_AUTHORIZATION'] || '').split[1]
     return status 401 unless AuthenticationClient.authorized?(token)
 
-    @meme = Meme.new
-    @meme.image_url = @request_body_json['meme']['image_url']
-    @meme.text = @request_body_json['meme']['text']
+    meme = Meme.new
+    meme.image_url = @request_body_json['meme']['image_url']
+    meme.text = @request_body_json['meme']['text']
+    meme.create
 
-    begin
-      @meme.create
-    rescue StandardError # TODO: Catch a specific error. Move download code that raises private method call to a separate classs, and raise specific error there
-      status 400
-    else
-      redirect "/meme/#{@meme.file_name}", 303
-    end
+    redirect "/meme/#{meme.file_name}", 303
+    # TODO: Catch a specific error. Move download code that raises private method
+    # call to a separate classs, and raise specific error there
+  rescue StandardError => e
+    pp e
+    status 400
   end
 
   get '/meme/:file_name' do
@@ -46,30 +41,29 @@ class ApplicationController < Sinatra::Base
   end
 
   post '/signup' do
-    begin
-      RequestBodyValidator.validate(@request_body_json)
-    rescue RequestBodyValidatorError => e
+    @username = @request_body_json['user']['username']
+    @password = @request_body_json['user']['password']
+  rescue StandardError
+    status 400
+  else
+    if @username.empty? # TODO: Introduce a validator class
+      # TODO: Extract error serialization to avoid duplication
+      @blank_username_error = { errors: [{ message: 'Username is blank' }] }
       status 400
-      body e
+      @blank_username_error.to_json
+    elsif @password.empty?
+      @blank_password_error = { errors: [{ message: 'Password is blank' }] }
+      status 400
+      body @blank_password_error.to_json
     else
-     # if @username.empty? # TODO: Introduce a validator class
-      #  @blank_username_error = { 'errors': [{ 'message': 'Username is blank' }] } # TODO: Extract error serialization to avoid duplication
-      #  status 400
-      #  @blank_username_error.to_json
-      #elsif @password.empty?
-      #  @blank_password_error = { 'errors': [{ 'message': 'Password is blank' }] }
-      #  status 400
-      #  body @blank_password_error.to_json
-      #else
-        begin
-          @user_token = AuthenticationClient.create_user(@username, @password) # TODO: Look at ServiceObject pattern
-        rescue UserAlreadyExistsError
-          status 409
-        else
-          status 201
-          body @user_token
-        end
-      #end
+      begin
+        @user_token = AuthenticationClient.create_user(@username, @password) # TODO: Look at ServiceObject pattern
+      rescue UserAlreadyExistsError
+        status 409
+      else
+        status 201
+        body @user_token
+      end
     end
   end
 
@@ -80,7 +74,7 @@ class ApplicationController < Sinatra::Base
     begin
       @user_token = AuthenticationClient.login_user(@username, @password)
     rescue IncorrectUserCredentialsError
-      @incorrect_user_credentials_error = { 'errors': [{ 'message': 'Incorrect user credentials' }] }
+      @incorrect_user_credentials_error = { errors: [{ message: 'Incorrect user credentials' }] }
       status 400
       body @incorrect_user_credentials_error.to_json
     else

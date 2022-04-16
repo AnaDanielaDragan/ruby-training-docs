@@ -22,9 +22,7 @@ class Meme
     @file_name = 'image1.jpg'
     @meme_path = self.class.file_path(@file_name)
     uri.open do |image|
-      File.open(@meme_path, 'wb') do |file|
-        file.write(image.read)
-      end
+      File.binwrite(@meme_path, image.read)
     end
   end
 
