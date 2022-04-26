@@ -20,12 +20,8 @@ class ApplicationController < Sinatra::Base
   end
 
   post '/memes' do
-    begin #extract auth check in separate method
-      token = request.env['HTTP_AUTHORIZATION'].split[1]
-    rescue NoMethodError
-      status 401
-    end
-
+    # extract auth check in separate method
+    token = (request.env['HTTP_AUTHORIZATION'] || '').split[1]
     return status 401 unless AuthenticationClient.authorized?(token)
 
     @meme = Meme.new
@@ -52,24 +48,24 @@ class ApplicationController < Sinatra::Base
       status 400
       body e
     else
-     # if @username.empty? # TODO: Introduce a validator class
+      # if @username.empty? # TODO: Introduce a validator class
       #  @blank_username_error = { 'errors': [{ 'message': 'Username is blank' }] } # TODO: Extract error serialization to avoid duplication
       #  status 400
       #  @blank_username_error.to_json
-      #elsif @password.empty?
+      # elsif @password.empty?
       #  @blank_password_error = { 'errors': [{ 'message': 'Password is blank' }] }
       #  status 400
       #  body @blank_password_error.to_json
-      #else
-        begin
-          @user_token = AuthenticationClient.create_user(@username, @password) # TODO: Look at ServiceObject pattern
-        rescue UserAlreadyExistsError
-          status 409
-        else
-          status 201
-          body @user_token
-        end
-      #end
+      # else
+      begin
+        @user_token = AuthenticationClient.create_user(@username, @password) # TODO: Look at ServiceObject pattern
+      rescue UserAlreadyExistsError
+        status 409
+      else
+        status 201
+        body @user_token
+      end
+      # end
     end
   end
 

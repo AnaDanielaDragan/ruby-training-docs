@@ -45,7 +45,7 @@ class AuthenticationClient
 
     def validate_user(username, password)
       db_client = DBClient.instance
-      raise IncorrectUserCredentialsError.new unless db_client.get_user(username)
+      raise IncorrectUserCredentialsError unless db_client.get_user(username)
 
       validate_password(username, password)
     end
@@ -53,7 +53,7 @@ class AuthenticationClient
     def validate_password(username, password)
       db_client = DBClient.instance
       result = db_client.get_password(username)
-      raise IncorrectUserCredentialsError.new unless compare_passwords(result[0], password)
+      raise IncorrectUserCredentialsError unless compare_passwords(result[0], password)
     end
 
     def compare_passwords(encrypted_password, plain_password)

@@ -17,11 +17,9 @@ class DBClient
   end
 
   def create_user(username, password)
-    begin
-      add_user(username, password)
-    rescue SQLite3::ConstraintException
-      raise UserAlreadyExistsError.new
-    end
+    add_user(username, password)
+  rescue SQLite3::ConstraintException
+    raise UserAlreadyExistsError
   end
 
   def create_token(username, token)
