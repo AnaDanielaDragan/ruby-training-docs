@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'mini_magick'
+require './app/validators/file_downloader'
 
 class Meme
   attr_accessor :image_url, :text, :file_name
@@ -17,10 +18,9 @@ class Meme
   private
 
   def save_image
-    uri = URI.parse(image_url)
     @file_name = 'image1.jpg'
     @meme_path = self.class.file_path(@file_name)
-    FileDownloader.download_file(uri, @meme_path)
+    FileDownloader.download_file(image_url, @meme_path)
   end
 
   def add_text

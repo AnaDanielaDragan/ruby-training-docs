@@ -4,6 +4,7 @@ require 'sinatra/base'
 require './app/models/meme'
 require './app/clients/authentication_client'
 require './app/validators/request_body_validator'
+require './app/validators/image_request_params_validator'
 
 class ApplicationController < Sinatra::Base
   module ContentType
@@ -25,8 +26,7 @@ class ApplicationController < Sinatra::Base
     return status 401 unless AuthenticationClient.authorized?(token)
 
     @meme = Meme.new
-    @meme.image_url = @request_body_json['meme']['image_url']
-    @meme.text = @request_body_json['meme']['text']
+    @meme.image_url, @meme.text = ImageRequestParamsValidator.validate(@request_body_json)
     @meme.create
 
     redirect "/meme/#{@meme.file_name}", 303

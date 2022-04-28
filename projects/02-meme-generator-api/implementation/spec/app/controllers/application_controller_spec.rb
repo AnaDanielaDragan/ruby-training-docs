@@ -23,7 +23,7 @@ describe 'POST /memes' do
     let(:request_body) do
       {
         meme: {
-          'image_url': 'https://images.unsplash.com/photo-1647549831144-09d4c521c1f1',
+          'image_url': 'https://media.npr.org/assets/img/2021/08/11/gettyimages-1279899488_wide-f3860ceb0ef19643c335cb34df3fa1de166e2761-s1100-c50.jpg',
           'text': 'Start the way by organising your playground'
         }
       }
@@ -47,7 +47,7 @@ describe 'POST /memes' do
     let(:request_body) do
       {
         meme: {
-          'image_url': 'https://images.unsplash.com/photo-1647549831144-09d4c521c1f1'
+          'image_url': 'https://media.npr.org/assets/img/2021/08/11/gettyimages-1279899488_wide-f3860ceb0ef19643c335cb34df3fa1de166e2761-s1100-c50.jpg'
         }
       }
     end
