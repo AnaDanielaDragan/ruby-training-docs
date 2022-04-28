@@ -22,15 +22,14 @@ class ApplicationController < Sinatra::Base
   end
 
   post '/memes' do
-    # extract auth check in separate method
     token = (request.env['HTTP_AUTHORIZATION'] || '').split[1]
     return status 401 unless AuthenticationClient.authorized?(token)
 
-    @meme = Meme.new
-    @meme.image_url, @meme.text = ImageRequestParamsValidator.validate(@request_body_json)
-    @meme.create
+    meme = Meme.new
+    meme.image_url, meme.text = ImageRequestParamsValidator.validate(@request_body_json)
+    meme.create
 
-    redirect "/meme/#{@meme.file_name}", 303
+    redirect "/meme/#{meme.file_name}", 303
 
   rescue InvalidFileUriError
     status 400
@@ -43,10 +42,10 @@ class ApplicationController < Sinatra::Base
 
   post '/signup' do
     username, password = RequestBodyValidator.validate(@request_body_json)
-    @user_token = AuthenticationClient.create_user(username, password) # TODO: Look at ServiceObject pattern
+    user_token = AuthenticationClient.create_user(username, password)
 
     status 201
-    body @user_token
+    body user_token
   rescue RequestBodyValidatorError => e
     status 400
     body ErrorMessageBody.create(e.message)
@@ -55,18 +54,15 @@ class ApplicationController < Sinatra::Base
   end
 
   post '/login' do
-    @username = @request_body_json['user']['username']
-    @password = @request_body_json['user']['password']
+    username = @request_body_json['user']['username']
+    password = @request_body_json['user']['password']
 
-    begin
-      @user_token = AuthenticationClient.login_user(@username, @password)
-    rescue IncorrectUserCredentialsError
-      @incorrect_user_credentials_error = { 'errors': [{ 'message': 'Incorrect user credentials' }] }
-      status 400
-      body @incorrect_user_credentials_error.to_json
-    else
-      status 200
-      body @user_token
-    end
+    user_token = AuthenticationClient.login_user(username, password)
+
+    status 200
+    body user_token
+  rescue IncorrectUserCredentialsError
+    status 400
+    body ErrorMessageBody.create('Incorrect user credentials')
   end
 end
