@@ -2,11 +2,14 @@
 
 source 'https://rubygems.org'
 
+gem 'bcrypt'
 gem 'mini_magick'
 gem 'open-uri'
+gem 'pry'
 gem 'rack-test'
 gem 'require_all'
-gem 'sinatra'
-gem 'thin'
 gem 'rspec'
-gem 'pry'
+gem 'securerandom'
+gem 'sinatra'
+gem 'sqlite3'
+gem 'thin'
